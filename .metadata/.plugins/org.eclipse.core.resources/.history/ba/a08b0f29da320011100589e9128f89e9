@@ -1,0 +1,40 @@
+package com.klu.scholarship.dto;
+
+public class ApplicationResponseDTO {
+
+    private Long id;
+   
+	private String StudentName;
+    private String status;
+    private String userEmail;
+    private String scholarshipTitle;
+
+    public ApplicationResponseDTO(Long id, String status, String userEmail, String scholarshipTitle) {
+        this.id = id;
+        this.StudentName = StudentName;
+        this.status = status;
+        this.userEmail = userEmail;
+        this.scholarshipTitle = scholarshipTitle;
+    }
+
+    public Long getId() {
+        return id;
+    }
+    public String getStudentName() {
+		return StudentName;
+	}
+
+   
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public String getScholarshipName() {
+        return scholarshipTitle;
+    }
+}

@@ -1,0 +1,24 @@
+package com.klu.scholarship.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.klu.scholarship.dto.ApplicationRequestDTO;
+import com.klu.scholarship.dto.ApplicationResponseDTO;
+import com.klu.scholarship.service.ApplicationService;
+
+@RestController
+@RequestMapping("/api/application")
+public class ApplicationController {
+
+    @Autowired
+    private ApplicationService applicationService;
+
+    @PostMapping("/apply")
+    public ResponseEntity<ApplicationResponseDTO> apply(
+            @RequestBody ApplicationRequestDTO dto) {
+
+        return ResponseEntity.ok(applicationService.apply(dto));
+    }
+}

@@ -1,0 +1,83 @@
+package com.klu.scholarship.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.klu.scholarship.dto.ApplicationRequestDTO;
+import com.klu.scholarship.dto.ApplicationResponseDTO;
+import com.klu.scholarship.entity.Application;
+import com.klu.scholarship.entity.User;
+import com.klu.scholarship.entity.Scholarship;
+import com.klu.scholarship.exception.ResourceNotFoundException;
+import com.klu.scholarship.repository.ApplicationRepository;
+import com.klu.scholarship.repository.UserRepository;
+import com.klu.scholarship.repository.ScholarshipRepository;
+
+@Service
+public class ApplicationService {
+
+    @Autowired
+    private ApplicationRepository appRepo;
+
+    @Autowired
+    private UserRepository userRepo;
+
+    @Autowired
+    private ScholarshipRepository schRepo;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    // ✅ APPLY FOR SCHOLARSHIP
+    public ApplicationResponseDTO apply(ApplicationRequestDTO dto) {
+
+        Application app = new Application();
+
+        // 🔹 Fetch User safely
+        User user = userRepo.findById(dto.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // 🔹 Fetch Scholarship safely
+        Scholarship scholarship = schRepo.findById(dto.getScholarshipId())
+                .orElseThrow(() -> new ResourceNotFoundException("Scholarship not found"));
+
+        // 🔹 Set values
+        app.setUser(user);
+        app.setScholarship(scholarship);
+        app.setStatus("PENDING");
+
+        // 🔹 Save application
+        Application saved = appRepo.save(app);
+
+        // 🔹 Send Email
+        emailService.sendMail(
+                user.getEmail(),
+                "Application Submitted",
+                "You successfully applied for the scholarship!"
+        );
+
+        // 🔹 Send Notification
+        notificationService.notifyUser(
+                user.getId(),
+                "Application submitted successfully"
+        );
+
+        // 🔹 Convert to Response DTO
+        return new ApplicationResponseDTO(
+                saved.getId(),
+                saved.getStatus(),
+                user.getEmail(),
+                scholarship.getName()
+        );
+    }
+
+    // ✅ GET APPLICATIONS BY USER
+    public List<Application> getByUser(Long userId) {
+        return appRepo.findByUserId(userId);
+    }
+}

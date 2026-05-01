@@ -1,0 +1,57 @@
+package com.klu.scholarship.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.klu.scholarship.entity.*;
+import com.klu.scholarship.repository.*;
+
+import java.util.List;
+
+@Service
+public class ApplicationService {
+
+    @Autowired
+    private ApplicationRepository appRepo;
+
+    @Autowired
+    private UserRepository userRepo;
+
+    @Autowired
+    private ScholarshipRepository schRepo;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    public Application apply(Long userId, Long scholarshipId) {
+
+        Application app = new Application();
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        app.setUser(user);
+        app.setScholarship(schRepo.findById(scholarshipId).get());
+        app.setStatus("PENDING");
+
+        Application saved = appRepo.save(app);
+
+        // 📧 email
+        emailService.sendMail(
+            app.getUser().getEmail(),
+            "Application Submitted",
+            "You successfully applied!"
+        );
+
+        // 🔔 notification
+        notificationService.notifyUser(userId, "Applied successfully!");
+
+        return saved;
+    }
+
+    public List<Application> getByUser(Long userId) {
+        return appRepo.findByUserId(userId);
+    }
+}

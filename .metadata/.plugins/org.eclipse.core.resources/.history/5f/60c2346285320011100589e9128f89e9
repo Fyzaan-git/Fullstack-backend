@@ -1,0 +1,46 @@
+package com.klu.scholarship.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String name;
+    @Column(unique=true)
+    private String email;
+    private String password;
+    private String role;
+
+    // ✅ Getters
+    
+    public Long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    
+    public String getPassword() {
+    	return password; 
+    	}
+    
+    public String getRole() {
+    	return role;
+    	}
+
+    // ✅ Setters
+    public void setRole(String role) {
+    	this.role = role; 
+    	}
+    
+}

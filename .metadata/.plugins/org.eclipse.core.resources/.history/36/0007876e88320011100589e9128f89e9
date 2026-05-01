@@ -1,0 +1,20 @@
+package com.klu.scholarship.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.klu.scholarship.dto.LoginRequestDTO;
+import com.klu.scholarship.service.AuthService;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    @Autowired
+    private AuthService authService;
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequestDTO dto) {
+        return authService.login(dto);
+    }
+}

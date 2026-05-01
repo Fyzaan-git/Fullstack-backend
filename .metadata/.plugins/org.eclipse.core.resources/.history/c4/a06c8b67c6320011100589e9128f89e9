@@ -1,0 +1,38 @@
+package com.klu.scholarship.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import com.klu.scholarship.entity.User;
+import com.klu.scholarship.repository.UserRepository;
+import com.klu.scholarship.service.AuthService;
+import com.klu.scholarship.dto.LoginRequestDTO;
+
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin
+public class AuthController {
+
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private UserRepository userRepository; // ✅ FIX
+
+    @Autowired
+    private PasswordEncoder passwordEncoder; // ✅ FIX
+
+    // ✅ REGISTER
+    @PostMapping("/register")
+    public User register(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // 🔥 encrypt
+        return userRepository.save(user);
+    }
+
+    // ✅ LOGIN
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequestDTO dto) {
+        return authService.login(dto);
+    }
+}

@@ -1,0 +1,5 @@
+package com.klu.scholarship.service;
+
+public class NotificationService {
+
+}

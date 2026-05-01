@@ -1,0 +1,27 @@
+package com.klu.scholarship.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import com.klu.scholarship.entity.Application;
+import com.klu.scholarship.repository.ApplicationRepository;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/application")
+public class ApplicationController {
+
+    @Autowired
+    private ApplicationRepository repository;
+
+    @PostMapping("/create")
+    public Application create(@RequestBody Application app) {
+        return repository.save(app);
+    }
+
+    @GetMapping("/all")
+    public List<Application> getAll() {
+        return repository.findAll();
+    }
+}

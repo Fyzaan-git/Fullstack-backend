@@ -1,0 +1,5 @@
+package com.klu.scholarship.repository;
+
+public interface NotificationRepository {
+
+}

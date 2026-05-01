@@ -1,0 +1,5 @@
+package com.klu.scholarship.config;
+
+public class CorsConfig {
+
+}

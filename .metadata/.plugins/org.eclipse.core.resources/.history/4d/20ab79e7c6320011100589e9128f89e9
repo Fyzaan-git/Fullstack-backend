@@ -1,0 +1,46 @@
+package com.klu.scholarship.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.klu.scholarship.dto.LoginRequestDTO;
+import com.klu.scholarship.entity.User;
+import com.klu.scholarship.exception.ResourceNotFoundException;
+import com.klu.scholarship.repository.UserRepository;
+import com.klu.scholarship.security.JwtUtil;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserRepository userRepo;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    public User register(User user) {
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("ROLE_USER");
+
+        return userRepo.save(user);
+    }
+
+    // ✅ LOGIN WITH ENCRYPTED PASSWORD
+    public String login(LoginRequestDTO dto) {
+
+        User user = userRepo.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        // ✅ Secure password check
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        // ✅ Generate JWT token
+        return jwtUtil.generateToken(user.getEmail());
+    }
+}

@@ -1,0 +1,27 @@
+@Autowired
+private EmailService emailService;
+
+@Autowired
+private NotificationService notificationService;
+
+public Application apply(Long userId, Long scholarshipId) {
+
+    Application app = new Application();
+    app.setUser(userRepo.findById(userId).get());
+    app.setScholarship(schRepo.findById(scholarshipId).get());
+    app.setStatus("PENDING");
+
+    Application saved = appRepo.save(app);
+
+    // 📧 email
+    emailService.sendMail(
+        app.getUser().getEmail(),
+        "Application Submitted",
+        "You successfully applied!"
+    );
+
+    // 🔔 notification
+    notificationService.notifyUser(userId, "Applied successfully!");
+
+    return saved;
+}
